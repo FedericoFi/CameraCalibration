@@ -1,29 +1,31 @@
 clear all;
 gridfile_name='grid3d.dat';
+initial_guess_name='camera_param_initial_guess.dat';
 base_name='image-';
 
-K_init=[224.8 0 95;0 221.6 98;0 0 1];
+
 num_points=36;
 num_images=39;
 
+[K_init,distortion]=read_init_guess(initial_guess_name);
 
 griglia=extract_grid_pts(gridfile_name); 
-%griglia(:,3)=0;
+
 %HOMOGENEOUS COORIDNATE OF THE GRID POINTS
 griglia(:,4)=1;
 
 
 [rot_matrices,traslation_vect,points]=read_file(num_images);
 
+
 fx=K_init(1,1);
 fy=K_init(2,2);
 u0=K_init(1,3);
 v0=K_init(2,3);
-k1=0;
-k2=0;
-p1=0;
-p2=0;
-distortion = [0;0;0;0];
+k1=distortion(1);
+k2=distortion(2);
+p1=distortion(3);
+p2=distortion(4);
 
 H=zeros(8,8);
 b=zeros(8,1);
