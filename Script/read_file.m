@@ -1,8 +1,7 @@
-function [rotation,traslation,pts,normalized_pts]=read_file(num_files,rows,cols)
+function [rotation,traslation,pts]=read_file(num_files)
     rotation=cell(num_files+1,1);
     traslation=cell(num_files+1,1);
     pts=cell(num_files+1,1);
-    normalized_pts=cell(num_files+1,1);
     
     for i=0:num_files
         if i<10
@@ -27,9 +26,6 @@ function [rotation,traslation,pts,normalized_pts]=read_file(num_files,rows,cols)
         rotation{i+1}=R;
         traslation{i+1}=t;
         pts{i+1}=ps;
-        
-        norm_ps=[(ps(:,1)/cols) (ps(:,2)/rows)];
-        normalized_pts{i+1}=norm_ps;
     end
     
 end
