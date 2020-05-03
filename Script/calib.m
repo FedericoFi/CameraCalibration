@@ -8,7 +8,7 @@ num_images=39;
 
 
 griglia=extract_grid_pts(gridfile_name); 
-griglia(:,3)=0;
+%griglia(:,3)=0;
 %HOMOGENEOUS COORIDNATE OF THE GRID POINTS
 griglia(:,4)=1;
 
