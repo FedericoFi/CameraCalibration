@@ -39,25 +39,6 @@ for i=0:num_images
     end
     fprintf('Process image-%s.dat\n',number);
     
-    if i>0
-        fx=fx+x(1);
-        fy=fy+x(2);
-        u0=u0+x(3);
-        v0=v0+x(4);
-        k1=k1+x(5);
-        k2=k2+x(6);
-        p1=p1+x(7);
-        p2=p2+x(8);
-        
-        K_init = [fx 0 u0; 0 fy v0;0 0 1];
-        distortion = [k1; k2; p1; p2];
-        
-        H=zeros(8,8);
-        b=zeros(8,1);
-        disp(K_init);
-        disp(distortion');
-    end
-    
     %====   EXTRACT THE VALUE OF i-th images
     pts=points{i+1};
     R=rot_matrices{i+1};
@@ -96,16 +77,24 @@ for i=0:num_images
     end
    x=H\-b;
    disp(x);
-end
+   
+   fx=fx+x(1);
+   fy=fy+x(2);
+   u0=u0+x(3);
+   v0=v0+x(4);
+   k1=k1+x(5);
+   k2=k2+x(6);
+   p1=p1+x(7);
+   p2=p2+x(8);
 
-fx=fx+x(1);
-fy=fy+x(2);
-u0=u0+x(3);
-v0=v0+x(4);
-k1=k1+x(5);
-k2=k2+x(6);
-p1=p1+x(7);
-p2=p2+x(8);
+   K_init = [fx 0 u0; 0 fy v0;0 0 1];
+   distortion = [k1; k2; p1; p2];
+
+   H=zeros(8,8);
+   b=zeros(8,1);
+   disp(K_init);
+   disp(distortion');
+end
 
 K_init = [fx 0 u0; 0 fy v0;0 0 1];
 distortion = [k1; k2; p1; p2];
