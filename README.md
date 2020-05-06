@@ -13,3 +13,10 @@ The symbolic package require:
 * python
 * sympy (≥ 1.2)  
 * mpmath (≥ 1.0)
+
+
+## RUN:
+For running the code, putting in the same folder of the script the files that contains:  
+* Initial guess for camera parameters
+* Grid points
+* Image points and transformations world in camera frame
