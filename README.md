@@ -9,7 +9,7 @@ In the code is used the ***Octave Symbolic Package***.
 For install the symbolic package run in octave command line  
 *pkg install -forge symbolic*  
   
-The package require:  
+The symbolic package require:  
 * python
 * sympy (≥ 1.2)  
 * mpmath (≥ 1.0)
