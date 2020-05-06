@@ -7,29 +7,37 @@ base_name='image-';
 num_points=36;
 num_images=39;
 
+%Read initial guess of camera parameters
 [K_init,distortion]=read_init_guess(initial_guess_name);
 
+%Extract grid points
 griglia=extract_grid_pts(gridfile_name); 
 
 %HOMOGENEOUS COORIDNATE OF THE GRID POINTS
 griglia(:,4)=1;
 
-
+%Read data files
 [rot_matrices,traslation_vect,points]=read_file(num_images);
 
 
-fx=K_init(1,1);
-fy=K_init(2,2);
-u0=K_init(1,3);
-v0=K_init(2,3);
-k1=distortion(1);
-k2=distortion(2);
-p1=distortion(3);
-p2=distortion(4);
+fxr=K_init(1,1);
+fyr=K_init(2,2);
+u0r=K_init(1,3);
+v0r=K_init(2,3);
+k1r=distortion(1);
+k2r=distortion(2);
+p1r=distortion(3);
+p2r=distortion(4);
 
-H=zeros(8,8);
-b=zeros(8,1);
 
+H=zeros(8,8);       %initialize H matrix
+b=zeros(8,1);       %Initialize b vector
+
+
+deltaX=zeros(8,num_images);
+iterations=zeros(1,num_images);
+
+J=symbolicJac();    %Create symbolic Jacobian
 
 for i=0:num_images
     if i<10
@@ -39,65 +47,73 @@ for i=0:num_images
     end
     fprintf('Process image-%s.dat\n',number);
     
-    %====   EXTRACT THE VALUE OF i-th images
+    %====   EXTRACT THE VALUE OF i-th images    ====
     pts=points{i+1};
+    
     R=rot_matrices{i+1};
     t=traslation_vect{i+1};
-    
     homTransformMatrix=[R t; 0 0 0 1];
     
     immagine=points{i+1};
+    %===============================================
     
     for punto=1:num_points
-        world_points=griglia(punto,:)';
+        world_points = griglia(punto,:)';
         
         %========   Compute corrected image points  =========
-        vect1=homTransformMatrix*world_points;
-        x1=vect1(1)/vect1(3);
-        y1=vect1(2)/vect1(3);
+        vect1 = homTransformMatrix * world_points;
+        x1r = vect1(1)/vect1(3);
+        y1r = vect1(2)/vect1(3);
         
-        r2=x1^2+y1^2;                                       %Compute the radius^2
+        r2r = x1r^2+y1r^2;                                       %Compute the radius^2
         
-        x2=x1*(1+k1*r2+k2*r2^2)+2*p1*x1*y1+p2*(r2+2*x1^2);
-        y2=y1*(1+k1*r2+k2*r2^2)+p1*(r2+2*y1^2)+2*p2*x1*y1;
+        x2r = x1r*(1+k1r*r2r+k2r*r2r^2)+2*p1r*x1r*y1r+p2r*(r2r+2*x1r^2);
+        y2r = y1r*(1+k1r*r2r+k2r*r2r^2)+p1r*(r2r+2*y1r^2)+2*p2r*x1r*y1r;
         
-        prediction_u=fx*x2 + u0;
-        prediction_v=fy*y2 + v0;
+        prediction_u = fxr * x2r + u0r;
+        prediction_v = fyr * y2r + v0r;
         %===================================================
         
         prediction=[prediction_u;
                     prediction_v];
                 
                 
-        measurement=immagine(punto,:)';
-        [e,jac]=error_and_jacobian(prediction,measurement,homTransformMatrix,K_init,world_points,r2,distortion);
+        measurement = immagine(punto,:)';
+        %Compute error and evaluate jacobian
+        [e,jac] = error_and_jacobian(prediction,measurement,homTransformMatrix,K_init,world_points,r2r,distortion,J); 
         
-        H=H+jac'*jac;
-        b=b+jac'*e;
+        H = H+jac'*jac;
+        b = b+jac'*e;
     end
-   x=H\-b;
-   disp(x);
+   x = H\-b;
+   %disp(x);
    
-   fx=fx+x(1);
-   fy=fy+x(2);
-   u0=u0+x(3);
-   v0=v0+x(4);
-   k1=k1+x(5);
-   k2=k2+x(6);
-   p1=p1+x(7);
-   p2=p2+x(8);
+   deltaX(:,i+1) = x;
+   iterations(i+1) = i+1;
+   
+   %Adding perturbation to state variable
+   fxr=fxr+x(1);
+   fyr=fyr+x(2);
+   u0r=u0r+x(3);
+   v0r=v0r+x(4);
+   k1r=k1r+x(5);
+   k2r=k2r+x(6);
+   p1r=p1r+x(7);
+   p2r=p2r+x(8);
 
-   K_init = [fx 0 u0; 0 fy v0;0 0 1];
-   distortion = [k1; k2; p1; p2];
+   %K_init = [fxr 0 u0r; 0 fyr v0r;0 0 1];
+   %distortion = [k1r; k2r; p1r; p2r];
+   %disp(K_init);
+   %disp(distortion');
 
    H=zeros(8,8);
    b=zeros(8,1);
-   disp(K_init);
-   disp(distortion');
 end
 
-K_init = [fx 0 u0; 0 fy v0;0 0 1];
-distortion = [k1; k2; p1; p2];
+plotta(deltaX,iterations); %Plot perturbations
+
+K = [fxr 0 u0r; 0 fyr v0r;0 0 1];
+distortion = [k1r; k2r; p1r; p2r];
 disp("Parameter Estimation complete");
-disp(K_init);
+disp(K);
 disp(distortion');

@@ -1,6 +1,5 @@
-function [error,J]=error_and_jacobian(prediction,measurement,hom,initial_guess,world_pts,radius,distortion)
+function [error,j1]=error_and_jacobian(prediction,measurement,hom,initial_guess,world_pts,radius,distortion,J)
     
-    J=symbolicJac();
     
     %Extract points in world coordinates
     xw=world_pts(1);
@@ -45,6 +44,6 @@ function [error,J]=error_and_jacobian(prediction,measurement,hom,initial_guess,w
     r2=radius;
 
     error=prediction-measurement;
-    J=eval(J);
+    j1=eval(J);
     
 end
