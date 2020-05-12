@@ -1,17 +1,7 @@
 function [K,distortion]=read_init_guess(name)
-    separator = '';
-    skipped_rows = 1;
-    skipped_columns = 0;
-    last_row = 4;
-    last_column = 18;
-    K = dlmread(name, separator, 
-            [skipped_rows, skipped_columns, last_row-1, last_column-1]);
-            
-    separator = '';
-    skipped_rows = 4;
-    skipped_columns = 4;
-    last_row = 5;
-    last_column = 9;
-    distortion = dlmread(name, separator,
-            [skipped_rows, skipped_columns, last_row-1, last_column-1]);
+    [t1, t2 ,t3] = textread (name, "%f %f %f", 3, "headerlines", 1);
+    K=horzcat(t1,t2,t3);
+    
+    [d1, d2 ,d3, d4] = textread(name, 'Distorsion coefficients (k1,k2,p1,p2) : %f %f %f %f', 1, "headerlines", 4);
+    distortion=horzcat(d1,d2,d3,d4);
 endfunction
