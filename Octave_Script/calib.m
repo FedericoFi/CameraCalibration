@@ -112,3 +112,5 @@ distortion = [k1r; k2r; p1r; p2r];
 disp("Parameter Estimation complete");
 disp(K_init);
 disp(distortion');
+disp("Press any to close");
+pause;
