@@ -1,4 +1,4 @@
-function [rotation,traslation,pts]=read_file(num_files)
+function [rotation,traslation,pts]=read_file(num_files,num_points)
     rotation=cell(num_files+1,1);
     traslation=cell(num_files+1,1);
     pts=cell(num_files+1,1);
