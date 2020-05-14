@@ -15,8 +15,10 @@ The symbolic package require:
 * mpmath (≥ 1.0)
 
 
-## RUN:
+## Run:
 For running the code, putting in the same folder of the script the files that contains:  
-* Initial guess for camera parameters
-* Grid points
-* Image points and transformations world in camera frame
+* Initial guess for camera parameters (*camera_param_initial_guess.dat*)
+* Grid points (*camera_param_initial_guess.dat*)
+* Image points and transformations world in camera frame (*image-%d.dat*)
+
+:triangular_flag_on_post: The folder ***Octave_Script_NOsym*** include the same code without the calculation of the symbolic jacobian, so is not required the Symbolic Package for Octave
