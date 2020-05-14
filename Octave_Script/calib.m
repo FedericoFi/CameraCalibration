@@ -16,7 +16,7 @@ griglia=dlmread(gridfile_name);
 griglia(:,4)=1;
 
 
-[rot_matrices,traslation_vect,points]=read_file(num_images);
+[rot_matrices,traslation_vect,points]=read_file(num_images,num_points);
 
 
 fxr=K_init(1,1);
